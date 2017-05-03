@@ -12,12 +12,12 @@
         <div class="description">
           {{seller.description}}/{{seller.deliveryTime}}分钟送达
         </div>
-        <div v-if="seller.supports" class="support">
+        <div v-if="seller.supports" class="support" @click="showDetial">
           <span class="icon" :class="classMap[seller.supports[0].type]"></span>
           <span class="text">{{seller.supports[0].description}}</span>
         </div>
       </div>
-      <div v-if="seller.supports" class="support-count">
+      <div v-if="seller.supports" class="support-count" @click="showDetial">
         <span class="count">{{seller.supports.length}}个</span>
         <i class="icon-keyboard_arrow_right"></i>
       </div>
@@ -29,13 +29,42 @@
     <div class="background">
       <img :src="seller.avatar" width="100%" height="100%">
     </div>
+    <!--Sticky footer-->
+    <div v-show="detialShow" class="detial">
+      <div class="detial-wrapper clearfix">
+        <div class="detial-main">
+          <h1 class="name">{{seller.name}}</h1>
+          <div class="star-wrapper">
+            <star :size="48" :score="seller.score"></star>
+          </div>
+
+        </div>
+      </div>
+      <div class="detial-close">
+        <i class="icon-close"></i>
+      </div>
+    </div>
   </div>
 </template>
 <script>
+  import star from '../star/star';
   export default {
     props: {
       seller: {
         type: Object
+      }
+    },
+    components: {
+      star
+    },
+    data() {
+      return {
+        detialShow: false
+      };
+    },
+    methods: {
+      showDetial() {
+        this.detialShow = true;
       }
     },
     created() {
@@ -49,8 +78,9 @@
 
   .header {
     position: relative;
+    overflow: hidden;
     color: #fff;
-    background-color: rgba(7,17,27,0.5);
+    background-color: rgba(7, 17, 27, 0.5);
     .content-wrapper {
       position: relative;
       padding: 24px 12px 18px 24px;
@@ -153,12 +183,12 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      background: rgba(7,17,27,0.2);
+      background: rgba(7, 17, 27, 0.2);
       .bulletin-title {
         display: inline-block;
         vertical-align: top;
         width: 22px;
-        margin-top: 7px; //算出来的
+        margin-top: 8px; //算出来的
         height: 12px;
         @include bg-image('bulletin');
         background-size: 22px 12px;
@@ -176,15 +206,52 @@
         top: 8px;
       }
     }
-    .background{
+    .background {
       position: absolute;
-      top:0;
+      top: 0;
       height: 0;
       width: 100%;
       height: 100%;
       z-index: -1;
       filter: blur(10px);
 
+    }
+    .detial {
+      position: fixed;
+      z-index: 100;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background: rgba(7, 17, 27, 0.8);
+      .detial-wrapper{
+        min-height: 100%;
+        width: 100%;
+        .detial-main {
+          margin-top: 64px;
+          padding-bottom: 64px;
+          .name{
+            line-height: 16px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 700;
+          }
+          .star-wrapper{
+            margin-top: 18px;
+            padding: 2px 0;
+            text-align: center;
+          }
+        }
+      }
+      .detial-close{
+        position: relative;
+        width: 32px;
+        height: 32px;
+        margin: -64px auto 0 auto;
+        clear: both;
+        font-size: 32px;
+      }
     }
   }
 </style>
