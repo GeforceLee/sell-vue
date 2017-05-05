@@ -35,17 +35,22 @@
         </li>
       </ul>
     </div>
+    <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
   </div>
 </template>
 
 <script>
   const ERR_OK = 0;
   import BScroll from 'better-scroll';
+  import shopcart from 'components/shopcart/shopcart';
   export default {
     props: {
       seller: {
         type: Object
       }
+    },
+    components: {
+      shopcart
     },
     created() {
       this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
