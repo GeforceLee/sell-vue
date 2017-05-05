@@ -1,17 +1,18 @@
 <template>
   <div class="goods">
-    <div class="menu-wrapper">
+    <div class="menu-wrapper" v-el:menu-wrapper>
       <ul>
-        <li v-for="item in goods" class="menu-item">
+        <li v-for="item in goods" class="menu-item" :class="{'current':currentIndex===$index}"
+            @click="selectMenu($index,$event)">
           <span class="text border-1px">
             <span class="icon" v-show="item.type>0" :class="classMap[item.type]"></span>{{item.name}}
           </span>
         </li>
       </ul>
     </div>
-    <div class="foods-wrapper">
+    <div class="foods-wrapper" v-el:foods-wrapper>
       <ul>
-        <li v-for="item in goods" class="food-list">
+        <li v-for="item in goods" class="food-list food-list-hook">
           <h1 class="title">{{item.name}}</h1>
           <ul>
             <li v-for="food in item.foods" class="food-item border-1px">
@@ -22,8 +23,7 @@
                 <h2 class="name">{{food.name}}</h2>
                 <p class="desc">{{food.description}}</p>
                 <div class="extra">
-                  <span class="count">月售{{food.sellCount}}份</span>
-                  <span>好评率{{food.rating}}%</span>
+                  <span class="count">月售{{food.sellCount}}份</span><span>好评率{{food.rating}}%</span>
                 </div>
                 <div class="price">
                   <span class="now">${{food.price}}</span>
@@ -40,7 +40,7 @@
 
 <script>
   const ERR_OK = 0;
-
+  import BScroll from 'better-scroll';
   export default {
     props: {
       seller: {
@@ -53,13 +53,64 @@
         let body = response.body;
         if (body.code === ERR_OK) {
           this.goods = body.data;
+          this.$nextTick(() => {
+            this._initBScorll();
+            this._calculateHeight();
+          });
         }
       });
     },
     data() {
       return {
-        goods: []
+        goods: [],
+        listHeight: [],
+        scrollY: 0
       };
+    },
+    methods: {
+      _initBScorll() {
+        this.menuScorll = new BScroll(this.$els.menuWrapper, {
+          click: true
+        });
+        this.foodsScorll = new BScroll(this.$els.foodsWrapper, {
+          probeType: 3
+        });
+
+        this.foodsScorll.on('scroll', (pos) => {
+          this.scrollY = Math.abs(Math.round(pos.y));
+        });
+      },
+      _calculateHeight() {
+        let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
+        let hight = 0;
+        this.listHeight.push(hight);
+        for (let i = 0; i < foodList.length; i++) {
+          let item = foodList[i];
+          hight += item.clientHeight;
+          this.listHeight.push(hight);
+        }
+      },
+      selectMenu(index, event) {
+        if (!event._constructed) {
+          // 浏览器派发的事件,  在PC模式下有
+          return;
+        }
+        let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
+        this.foodsScorll.scrollToElement(foodList[index], 300);
+      }
+
+    },
+    computed: {
+      currentIndex() {
+        for (let i = 0; i < this.listHeight.length; i++) {
+          let height = this.listHeight[i];
+          let heightNext = this.listHeight[i + 1];
+          if (!heightNext || (this.scrollY >= height && this.scrollY < heightNext)) {
+            return i;
+          }
+        }
+        return 0;
+      }
     }
   };
 </script>
@@ -86,6 +137,16 @@
         width: 56px;
         padding: 0 12px;
         line-height: 14px;
+        &.current {
+          position: relative;
+          z-index: 10;
+          margin-top: -1px;
+          background: #fff;
+          font-weight: 700;
+          .text {
+            border: none;
+          }
+        }
         .icon {
           display: inline-block;
           vertical-align: top;
@@ -149,23 +210,23 @@
         .content {
           flex: 1;
           .name {
-            margin: 2px 0  8px 0;
+            margin: 2px 0 8px 0;
             height: 14px;
             line-height: 14px;
             font-size: 14px;
-            color: rgb(7,17,27);
+            color: rgb(7, 17, 27);
           }
-          .desc,.extra{
+          .desc, .extra {
             line-height: 10px;
             font-size: 10px;
-            color: rgb(147,153,159);
+            color: rgb(147, 153, 159);
           }
           .desc {
             margin-bottom: 8px;
-
+            line-height: 12px;
           }
           .extra {
-            .count{
+            .count {
               margin-right: 12px;
             }
           }
@@ -175,13 +236,13 @@
           line-height: 24px;
           .now {
             margin-right: 8px;
-            color: rgb(240,20,20);
+            color: rgb(240, 20, 20);
             font-size: 14px;
           }
           .old {
             text-decoration: line-through;
             font-size: 10px;
-            color: rgb(147,153,159);
+            color: rgb(147, 153, 159);
           }
         ;
         }
