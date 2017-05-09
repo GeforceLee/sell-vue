@@ -225,7 +225,6 @@
         font-size: 12px;
         color: rgb(147, 153, 159);
         background: #f3f5f7;
-
       }
       .food-item {
         display: flex;
