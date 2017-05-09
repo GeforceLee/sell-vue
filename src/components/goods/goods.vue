@@ -38,7 +38,7 @@
         </li>
       </ul>
     </div>
-    <shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice"
+    <shopcart v-ref:shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice"
               :min-price="seller.minPrice"></shopcart>
   </div>
 </template>
@@ -109,8 +109,13 @@
         }
         let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
         this.foodsScorll.scrollToElement(foodList[index], 300);
+      },
+      _drop(target) {
+//        this.$nextTick(() => {
+          this.$refs.shopcart.drop(target);
+//        });
+        // 如果卡 打开
       }
-
     },
     computed: {
       currentIndex() {
@@ -132,8 +137,12 @@
             }
           });
         });
-        console.log(foods);
         return foods;
+      }
+    },
+    events: {
+      'cart.add': function(target) {
+        this._drop(target);
       }
     }
   };

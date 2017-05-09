@@ -28,6 +28,7 @@
         } else {
           this.food.count++;
         }
+        this.$dispatch('cart.add', event.target);
       },
       decreaseCard(event) {
         if (!event._constructed) {
