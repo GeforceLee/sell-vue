@@ -19,19 +19,25 @@
 </template>
 
 <script>
+  import { urlParse } from 'common/js/util';
   import header from './components/header/header.vue';
   const ERR_OK = 0;
   export default {
     data() {
       return {
-        seller: {}
+        seller: {
+          id: (() => {
+            let urlParams = urlParse();
+            return urlParams.id;
+          })()
+        }
       };
     },
     created() {
       this.$http.get('api/seller').then((response) => {
         let body = response.body;
         if (body.code === ERR_OK) {
-          this.seller = body.data;
+          this.seller = Object.assign({}, this.seller, body.data);
         }
       });
     },
@@ -43,6 +49,7 @@
 
 <style lang="scss">
   @import "common/scss/mixin";
+
   .tab {
     display: flex;
     width: 100%;
@@ -51,7 +58,7 @@
     .tab-item {
       flex: 1;
       text-align: center;
-      @include border-1px(rgba(7,17,27,0.1));
+      @include border-1px(rgba(7, 17, 27, 0.1));
       a {
         display: block;
         font-size: 14px;
