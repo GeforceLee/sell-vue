@@ -18,33 +18,33 @@ router.get('/', function(req, res, next) {
 app.use(router);
 var data = require('./data.json');
 var apiRouter = express.Router();
-apiRouter.get('/seller',function (req,res) {
+apiRouter.get('/seller', function(req, res) {
   res.send({
-    code:0,
-    data:data.seller
-  })
+    code: 0,
+    data: data.seller
+  });
 });
-apiRouter.get('/goods',function (req,res) {
+apiRouter.get('/goods', function(req, res) {
   res.send({
-    code:0,
-    data:data.goods
-  })
+    code: 0,
+    data: data.goods
+  });
 });
-apiRouter.get('/ratings',function (req,res) {
+apiRouter.get('/ratings', function(req, res) {
   res.send({
-    code:0,
-    data:data.ratings
-  })
+    code: 0,
+    data: data.ratings
+  });
 });
 
 app.use('/api', apiRouter);
 
 app.use(express.static('./dist'));
 
-module.exports = app.listen(port, function (err) {
+module.exports = app.listen(port, function(err) {
   if (err) {
-    console.log(err)
-    return
+    console.log(err);
+    return;
   }
-  console.log('Listening at http://localhost:' + port + '\n')
-})
+  console.log('Listening at http://localhost:' + port + '\n');
+});

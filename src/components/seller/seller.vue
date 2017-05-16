@@ -1,5 +1,5 @@
 <template>
-  <div class="seller" v-el:seller>
+  <div class="seller" ref="seller">
     <div class="seller-content">
       <div class="overview">
         <h1 class="title">{{seller.name}}</h1>
@@ -49,8 +49,8 @@
       <split></split>
       <div class="pics">
         <h1 class="title">商家实景</h1>
-        <div class="pic-wrapper" v-el:pic-wrapper>
-          <ul class="pic-list" v-el:pic-list>
+        <div class="pic-wrapper" ref="picWrapper">
+          <ul class="pic-list" ref="picList">
             <li class="pic-item" v-for="pic in seller.pics">
               <img :src="pic" width="120" height="90">
             </li>
@@ -98,9 +98,11 @@
     created() {
       this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
     },
-    ready() {
-      this._initScroll();
-      this._initPicScroll();
+    mounted() {
+      this.$nextTick(() => {
+        this._initScroll();
+        this._initPicScroll();
+      });
     },
     watch: {
       'seller'() {
@@ -111,7 +113,7 @@
     methods: {
       _initScroll() {
         if (!this.scroll) {
-          this.scroll = new BScroll(this.$els.seller, {
+          this.scroll = new BScroll(this.$refs.seller, {
             click: true
           });
         } else {
@@ -123,10 +125,10 @@
           let picWidth = 120;
           let margin = 6;
           let width = (picWidth + margin) * this.seller.pics.length - margin;
-          this.$els.picList.style.width = width + 'px';
+          this.$refs.picList.style.width = width + 'px';
           this.$nextTick(() => {
             if (!this.picScroll) {
-              this.picScroll = new BScroll(this.$els.picWrapper, {
+              this.picScroll = new BScroll(this.$refs.picWrapper, {
                 scrollX: true,
                 eventPassthrough: 'vertical'
               });
